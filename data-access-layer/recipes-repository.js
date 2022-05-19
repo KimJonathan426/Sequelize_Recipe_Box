@@ -35,11 +35,10 @@ async function getTenNewestRecipes() {
   //
   // Docs: https://sequelize.org/master/class/lib/model.js~Model.html#static-method-findAll
 
-  const recipes = await Recipe.findAll({
+  return await Recipe.findAll({
     order: [['createdAt', 'DESC']],
-    limit: 2
+    limit: 10
   })
-
   // console.log(JSON.stringify(recipes, null, 2));
 }
 
@@ -81,7 +80,7 @@ async function getRecipeById(id) {
   // Docs: https://sequelize.org/v5/manual/models-usage.html#eager-loading
   //       https://sequelize.org/v5/manual/models-usage.html#nested-eager-loading
 
-  const recipes = await Recipe.findByPk(id, {
+  return await Recipe.findByPk(id, {
     include: [
       Instruction,
       {
@@ -109,7 +108,7 @@ async function deleteRecipe(id) {
     }
   })
 
-  await recipe.destroy();
+  return await recipe.destroy();
 }
 
 // deleteRecipe(2);
@@ -120,7 +119,7 @@ async function createNewRecipe(title) {
   //
   // Docs: https://sequelize.org/v5/manual/instances.html#creating-persistent-instances
 
-  const recipe = await Recipe.create({
+  return await Recipe.create({
     title
   })
 }
@@ -133,7 +132,7 @@ async function searchRecipes(term) {
   //
   // Docs: https://sequelize.org/v5/manual/querying.html
 
-  const recipes = await Recipe.findAll({
+  return await Recipe.findAll({
     where: {
       title: {[Op.iLike]: `%${term}%`}
     }
