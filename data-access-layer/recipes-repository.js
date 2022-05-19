@@ -34,7 +34,16 @@ async function getTenNewestRecipes() {
   // });
   //
   // Docs: https://sequelize.org/master/class/lib/model.js~Model.html#static-method-findAll
+
+  const recipes = await Recipe.findAll({
+    order: [['createdAt', 'DESC']],
+    limit: 2
+  })
+
+  // console.log(JSON.stringify(recipes, null, 2));
 }
+
+// getTenNewestRecipes();
 
 async function getRecipeById(id) {
   // Use the findByPk method of the Recipe object to return the recipe. Use
@@ -71,7 +80,21 @@ async function getRecipeById(id) {
   // Here are links to the wholly-inadequate docs for this.
   // Docs: https://sequelize.org/v5/manual/models-usage.html#eager-loading
   //       https://sequelize.org/v5/manual/models-usage.html#nested-eager-loading
+
+  const recipes = await Recipe.findByPk(id, {
+    include: [
+      Instruction,
+      {
+        model: Ingredient,
+        include: [MeasurementUnit]
+      }
+    ]
+  });
+
+  // console.log(JSON.stringify(recipes, null, 2));
 }
+
+// getRecipeById(2);
 
 async function deleteRecipe(id) {
   // Use the findByPk method of the Recipe object to get the object and, then,
@@ -79,23 +102,47 @@ async function deleteRecipe(id) {
   // saw in the video.
   //
   // Docs: https://sequelize.org/master/class/lib/model.js~Model.html#instance-method-destroy
+
+  const recipe = await Recipe.findOne({
+    where: {
+      id
+    }
+  })
+
+  await recipe.destroy();
 }
+
+// deleteRecipe(2);
 
 async function createNewRecipe(title) {
   // Use the create method of the Recipe object to create a new object and
   // return it.
   //
   // Docs: https://sequelize.org/v5/manual/instances.html#creating-persistent-instances
+
+  const recipe = await Recipe.create({
+    title
+  })
 }
+
+// createNewRecipe('Hashbrown delights')
 
 async function searchRecipes(term) {
   // Use the findAll method of the Recipe object to search for recipes with the
   // given term in its title
   //
   // Docs: https://sequelize.org/v5/manual/querying.html
+
+  const recipes = await Recipe.findAll({
+    where: {
+      title: {[Op.iLike]: `%${term}%`}
+    }
+  })
+
+  console.log(JSON.stringify(recipes, null, 2));
 }
 
-
+// searchRecipes('brown')
 
 
 /* Don't change code below this line ******************************************/
